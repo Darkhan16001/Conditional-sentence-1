@@ -1,0 +1,3047 @@
+
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conditional Battle | By Darkhan</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg:#080e20;
+  --panel:#16213c;
+  --panel2:#223453;
+  --border:#3b5072;
+  --text:#f5f8ff;
+  --muted:#b5c5e0;
+  --blue:#64b6ff;
+  --purple:#ac91ff;
+  --green:#4be1ad;
+  --yellow:#ffda73;
+  --red:#ff7188;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:Manrope,Arial,sans-serif;
+  background:
+    radial-gradient(ellipse at 0 0,#273e75,transparent 40%),
+    radial-gradient(ellipse at 100% 85%,#302052,transparent 45%),
+    var(--bg);
+}
+
+button,input{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default;opacity:.5}
+button:focus-visible,input:focus-visible{
+  outline:3px solid var(--yellow);
+  outline-offset:3px;
+}
+h1,h2,h3,p{margin-top:0}
+p{line-height:1.75}
+
+h1{
+  font-size:clamp(38px,5vw,75px);
+  line-height:1.1;
+}
+
+h2{font-size:clamp(25px,3vw,43px)}
+
+.container{
+  width:min(1320px,100%);
+  margin:auto;
+  padding:22px;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:13px;
+  flex-wrap:wrap;
+  margin-bottom:28px;
+}
+
+.logo{
+  font-weight:800;
+  font-size:22px;
+}
+
+.logo span{color:var(--blue)}
+
+.top-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.badge{
+  display:inline-block;
+  padding:9px 15px;
+  background:#283b61;
+  border:1px solid #50709a;
+  border-radius:40px;
+  color:#d3e7ff;
+  font-size:12px;
+  font-weight:800;
+}
+
+.btn{
+  border:0;
+  padding:15px 23px;
+  border-radius:14px;
+  background:var(--blue);
+  color:#07172b;
+  font-weight:800;
+  transition:.18s;
+}
+
+.btn:hover:not(:disabled){
+  filter:brightness(1.1);
+  transform:translateY(-2px);
+}
+
+.btn.secondary{
+  background:#2b3e5f;
+  border:1px solid #50688c;
+  color:white;
+}
+
+.btn.green{background:var(--green)}
+.btn.purple{background:var(--purple);color:white}
+.btn.big{padding:19px 34px;font-size:18px}
+.btn.small{padding:10px 14px;font-size:12px}
+
+.screen{
+  display:none;
+  animation:fade .3s ease;
+}
+
+.screen.active{display:block}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.card{
+  background:rgba(22,33,60,.97);
+  border:1px solid var(--border);
+  border-radius:25px;
+  padding:26px;
+  box-shadow:0 15px 35px #0002;
+}
+
+.muted{color:var(--muted)}
+
+.gradient{
+  background:linear-gradient(90deg,#68baff,#c29bff);
+  background-clip:text;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* БАСТЫ БЕТ */
+
+.hero{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:25px;
+  align-items:center;
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:18px;
+}
+
+.hero-image{
+  height:435px;
+  overflow:hidden;
+  border-radius:28px;
+  position:relative;
+  background:linear-gradient(135deg,#315a7e,#51366b);
+}
+
+.hero-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.hero-caption{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  padding:20px;
+  border-radius:17px;
+  background:#081429e8;
+  backdrop-filter:blur(12px);
+}
+
+.hero-caption strong{font-size:22px}
+.hero-caption p{font-size:13px;margin:6px 0 0}
+
+.stats{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:26px 0;
+}
+
+.stat{
+  background:#1a2a49;
+  border:1px solid #405678;
+  border-radius:16px;
+  padding:16px 21px;
+}
+
+.stat strong{
+  display:block;
+  font-size:27px;
+}
+
+.stat span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.team-inputs{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin:20px 0 25px;
+}
+
+.team-inputs label{
+  display:block;
+  color:var(--muted);
+  margin-bottom:8px;
+  font-size:13px;
+}
+
+.team-inputs input{
+  width:100%;
+  background:#0c1831;
+  border:1px solid #4c6384;
+  border-radius:12px;
+  color:white;
+  padding:16px;
+}
+
+/* ТАЙМЕР ЖӘНЕ ПРОГРЕСС */
+
+.section-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:16px;
+  margin-bottom:15px;
+}
+
+.timer-box{
+  text-align:center;
+  padding:12px 24px;
+  background:#142b49;
+  border:1px solid #4b6f96;
+  border-radius:18px;
+}
+
+.timer-box small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.timer-box strong{
+  display:block;
+  font-size:36px;
+  font-variant-numeric:tabular-nums;
+}
+
+.timer-box.danger{
+  border-color:var(--red);
+  color:var(--red);
+}
+
+.progress{
+  height:10px;
+  background:#293b57;
+  border-radius:20px;
+  overflow:hidden;
+  margin:20px 0 25px;
+}
+
+.progress-fill{
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+  transition:width .2s;
+}
+
+/* ТҮСІНДІРУ */
+
+.lesson-grid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:22px;
+}
+
+.lesson-content h2{margin:15px 0 20px}
+
+.lesson-text p{
+  color:#dbe8fa;
+  font-size:16px;
+  line-height:1.95;
+  margin-bottom:15px;
+}
+
+.subheading{
+  font-size:18px;
+  color:#b9dfff;
+  margin:25px 0 12px;
+}
+
+.formula{
+  padding:21px;
+  border-left:5px solid var(--blue);
+  border-radius:13px;
+  background:#0b1831;
+  color:#b4e8ff;
+  font-size:clamp(17px,2vw,23px);
+  font-weight:800;
+  white-space:pre-line;
+  overflow-wrap:anywhere;
+}
+
+.examples{
+  padding:7px 18px;
+  background:#0e1d36;
+  border:1px solid #3b4e6b;
+  border-radius:15px;
+}
+
+.example{
+  padding:14px 0;
+  border-bottom:1px solid #344764;
+}
+
+.example:last-child{border:0}
+
+.example b{
+  display:block;
+  color:#d5eaff;
+}
+
+.example span{
+  display:block;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.info-box{
+  padding:18px;
+  border-radius:14px;
+  margin-top:18px;
+  line-height:1.85;
+}
+
+.remember{
+  background:#302b4d;
+  border:1px solid #695a93;
+}
+
+.mistake{
+  background:#442a3a;
+  border:1px solid #8d5268;
+}
+
+.info-box strong{
+  display:block;
+  margin-bottom:7px;
+}
+
+.notebook{
+  margin-top:19px;
+  padding:21px;
+  background:#383226;
+  border:1px solid #8c7748;
+  border-radius:17px;
+}
+
+.notebook h3{color:var(--yellow)}
+
+.notebook p{
+  color:#f7e8c7;
+  white-space:pre-line;
+}
+
+.words{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.word{
+  background:#272c40;
+  border:1px solid #6a604e;
+  border-radius:11px;
+  padding:12px;
+}
+
+.word b{
+  display:block;
+  color:#bce1ff;
+}
+
+.word span{
+  font-size:13px;
+  color:#e3d8c4;
+}
+
+.activity{
+  margin-top:19px;
+  padding:19px;
+  background:#153e39;
+  border:1px solid #318879;
+  border-radius:15px;
+  line-height:1.8;
+}
+
+.activity strong{
+  display:block;
+  color:#b3ffe2;
+  margin-bottom:8px;
+}
+
+.lesson-photo{
+  position:sticky;
+  top:15px;
+  height:550px;
+  border-radius:25px;
+  overflow:hidden;
+  background:linear-gradient(135deg,#24567b,#472d69);
+}
+
+.lesson-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.photo-caption{
+  position:absolute;
+  bottom:20px;
+  left:20px;
+  right:20px;
+  background:#081429e9;
+  backdrop-filter:blur(12px);
+  border-radius:17px;
+  padding:20px;
+}
+
+.photo-caption strong{
+  display:block;
+  color:#bce2ff;
+  font-size:22px;
+}
+
+.photo-caption p{
+  margin:7px 0 0;
+  color:#e0eaff;
+}
+
+.navigation{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+
+.note{
+  background:#1b2e4b;
+  padding:18px;
+  border-radius:14px;
+  color:#c1d0e8;
+  font-size:13px;
+  line-height:1.8;
+  margin-top:18px;
+}
+
+/* ОЙЫН */
+
+.level-banner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  padding:20px;
+  border-radius:19px;
+  margin-bottom:19px;
+  background:linear-gradient(110deg,#18446e,#332b5a);
+  border:1px solid #536ca1;
+}
+
+.level-banner.hard{
+  background:linear-gradient(110deg,#6b293d,#482b73);
+  border-color:#9b6189;
+}
+
+.level-banner h2{
+  margin:8px 0 3px;
+}
+
+.level-banner p{
+  margin:0;
+  color:#d1e0f5;
+}
+
+.scoreboard{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:19px 0;
+}
+
+.team-score{
+  padding:18px;
+  border-radius:19px;
+  background:#1b2b48;
+  border:2px solid #405575;
+  text-align:center;
+}
+
+.team-score .name{
+  overflow-wrap:anywhere;
+  font-weight:800;
+}
+
+.team-score .points{
+  font-size:39px;
+  font-weight:800;
+  color:var(--green);
+}
+
+.team-score small{color:var(--muted)}
+
+.battle-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 255px;
+  gap:19px;
+}
+
+.question-card h2{
+  margin:20px 0 25px;
+  line-height:1.55;
+  font-size:clamp(22px,3vw,35px);
+}
+
+.team-answer{
+  border:1px solid #3d5072;
+  border-radius:17px;
+  background:#192942;
+  padding:17px;
+  margin-bottom:14px;
+}
+
+.team-answer.answered{
+  border-color:#647ab4;
+}
+
+.team-answer h3{
+  margin-bottom:12px;
+  font-size:16px;
+}
+
+.letter-options{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+}
+
+.letter-btn{
+  border:2px solid #4b6287;
+  background:#2c4163;
+  color:white;
+  padding:12px 7px;
+  min-height:50px;
+  border-radius:12px;
+  font-weight:800;
+}
+
+.letter-btn:hover:not(:disabled){
+  border-color:var(--blue);
+}
+
+.letter-btn.chosen{
+  border-color:var(--yellow);
+  background:#50452d;
+  color:#fff0c0;
+}
+
+.letter-btn.correct{
+  border-color:var(--green);
+  background:#185544;
+}
+
+.letter-btn.wrong{
+  border-color:var(--red);
+  background:#5b2a40;
+}
+
+.letter-btn:disabled{opacity:1}
+
+.choices-list{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:24px;
+}
+
+.choice{
+  border:1px solid #405677;
+  border-radius:12px;
+  padding:15px;
+  background:#1f304e;
+  font-size:15px;
+  line-height:1.65;
+}
+
+.choice b{color:#a8d7ff}
+
+.feedback{
+  display:none;
+  margin-top:19px;
+  padding:20px;
+  border:1px solid #428c7c;
+  background:#153e37;
+  border-radius:16px;
+  line-height:1.8;
+}
+
+.feedback.show{display:block}
+
+.round-time{
+  font-size:76px;
+  text-align:center;
+  color:var(--yellow);
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+
+.round-time.danger{color:var(--red)}
+
+.side{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.side p{
+  color:#c1d0e6;
+  font-size:14px;
+}
+
+.trophy{
+  font-size:80px;
+}
+
+.winner-card{
+  text-align:center;
+  padding:38px;
+  border-radius:28px;
+  border:1px solid #7766a5;
+  background:linear-gradient(135deg,#283e68,#412e65);
+  margin-bottom:22px;
+}
+
+.winner-card h2{color:var(--yellow)}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  text-align:left;
+  padding:15px;
+  border-bottom:1px solid #40516d;
+}
+
+th{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.review-item{
+  border-bottom:1px solid #394a67;
+  padding:15px 0;
+}
+
+footer{
+  text-align:center;
+  padding:32px 15px;
+  margin-top:60px;
+  border-top:1px solid #33445f;
+}
+
+footer small{
+  letter-spacing:4px;
+  color:#95a8c7;
+}
+
+footer strong{
+  display:block;
+  font-size:30px;
+  margin:9px 0;
+  background:linear-gradient(90deg,#70bbff,#c1a1ff);
+  background-clip:text;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+footer p{
+  margin:0;
+  font-size:12px;
+  color:#889bb9;
+}
+
+@media(max-width:950px){
+  .hero,.lesson-grid,.battle-grid{
+    grid-template-columns:1fr;
+  }
+
+  .hero-image{height:300px}
+  .lesson-photo{
+    position:relative;
+    height:330px;
+  }
+}
+
+@media(max-width:600px){
+  .container{padding:14px}
+  .card{padding:18px}
+  .team-inputs{grid-template-columns:1fr}
+  .scoreboard{gap:6px}
+  .team-score{padding:12px 5px}
+  .team-score .name{font-size:12px}
+  .team-score .points{font-size:27px}
+  .team-score small{font-size:10px}
+  .choices-list{grid-template-columns:1fr}
+  .round-time{font-size:60px}
+  .letter-btn{padding:12px 3px}
+  .navigation .btn{flex:1}
+  th,td{padding:10px 5px;font-size:12px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="topbar">
+
+  <div class="logo">
+    ⚡ CONDITIONAL <span>BATTLE</span>
+  </div>
+
+  <div class="top-actions">
+
+    <span class="badge" id="phaseLabel">
+      Сабаққа дайындық
+    </span>
+
+    <button
+      class="btn secondary small"
+      id="pauseButton"
+      hidden
+    >
+      ⏸ Үзіліс
+    </button>
+
+    <button
+      class="btn secondary small"
+      id="fullscreenButton"
+    >
+      ⛶ Толық экран
+    </button>
+
+  </div>
+
+</header>
+
+<!-- БАСТЫ БЕТ -->
+
+<section class="screen active" id="homeScreen">
+
+  <div class="hero">
+
+    <div>
+
+      <span class="badge">
+        АҒЫЛШЫН ТІЛІ • 40 МИНУТ
+      </span>
+
+      <h1 style="margin-top:20px">
+        CONDITIONAL<br>
+        <span class="gradient">BATTLE</span>
+      </h1>
+
+      <p>
+        Шартты сөйлемдерді үйрен!
+        Ережелер мен жаңа сөздерді дәптерге жаз,
+        мысалдарды талда және екі деңгейлі
+        командалық сайыста жеңіске жет.
+      </p>
+
+      <div class="stats">
+
+        <div class="stat">
+          <strong>20</strong>
+          <span>минут теория</span>
+        </div>
+
+        <div class="stat">
+          <strong>20 + 20</strong>
+          <span>екі деңгейдегі сұрақ</span>
+        </div>
+
+        <div class="stat">
+          <strong>30</strong>
+          <span>секунд әр сұраққа</span>
+        </div>
+
+        <div class="stat">
+          <strong>3</strong>
+          <span>команда</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="hero-image">
+
+      <img
+        src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1100&q=85"
+        alt="Студенттер"
+        onerror="this.style.display='none'"
+      >
+
+      <div class="hero-caption">
+        <strong>Екі деңгей. Үш команда. Бір жеңімпаз!</strong>
+        <p>English Grammar Competition</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:25px">
+
+    <h2>🏆 Командаларды тіркеу</h2>
+
+    <p class="muted">
+      Үш команда да барлық сұраққа жауап береді.
+      Әр команданың ұпайы жеке есептеледі.
+    </p>
+
+    <div class="team-inputs">
+
+      <div>
+        <label for="team1">1-команда</label>
+        <input id="team1" maxlength="24" value="Жалын">
+      </div>
+
+      <div>
+        <label for="team2">2-команда</label>
+        <input id="team2" maxlength="24" value="Қыран">
+      </div>
+
+      <div>
+        <label for="team3">3-команда</label>
+        <input id="team3" maxlength="24" value="Білім">
+      </div>
+
+    </div>
+
+    <button class="btn green big" id="startButton">
+      ▶ Сабақты бастау
+    </button>
+
+  </div>
+
+</section>
+
+<!-- ТЕОРИЯ -->
+
+<section class="screen" id="lessonScreen">
+
+  <div class="section-header">
+
+    <div>
+      <span class="badge">
+        1-БӨЛІМ • ТЕОРИЯ ЖӘНЕ ДӘПТЕРМЕН ЖҰМЫС
+      </span>
+
+      <h2 style="margin:13px 0 5px">
+        Conditional Sentences
+      </h2>
+
+      <p class="muted" id="lessonCount">
+        1 / 10 тақырып
+      </p>
+    </div>
+
+    <div class="timer-box" id="lessonTimerBox">
+      <small>ТҮСІНДІРУГЕ ҚАЛҒАН УАҚЫТ</small>
+      <strong id="lessonTimer">20:00</strong>
+    </div>
+
+  </div>
+
+  <div class="progress">
+    <div
+      class="progress-fill"
+      id="lessonProgress"
+    ></div>
+  </div>
+
+  <div class="lesson-grid">
+
+    <article class="card lesson-content">
+
+      <span class="badge" id="lessonType"></span>
+
+      <h2 id="lessonTitle"></h2>
+
+      <div class="lesson-text" id="lessonText"></div>
+
+      <h3 class="subheading">
+        📐 Грамматикалық формула
+      </h3>
+
+      <div class="formula" id="lessonFormula"></div>
+
+      <h3 class="subheading">
+        📖 Мысалдар және аудармасы
+      </h3>
+
+      <div class="examples" id="lessonExamples"></div>
+
+      <div class="info-box remember">
+        <strong>💡 Есте сақта!</strong>
+        <div id="lessonRemember"></div>
+      </div>
+
+      <div class="info-box mistake">
+        <strong>⚠️ Жиі кездесетін қате</strong>
+        <div id="lessonMistake"></div>
+      </div>
+
+      <div class="notebook">
+
+        <h3>✍️ ДӘПТЕРГЕ ЖАЗЫҢДАР</h3>
+        <p id="lessonNotebook"></p>
+
+        <h3>📚 ЖАҢА СӨЗДЕР</h3>
+        <div class="words" id="lessonWords"></div>
+
+      </div>
+
+      <div class="activity">
+
+        <strong>🎤 САБАҚТАҒЫ ТАПСЫРМА</strong>
+
+        <div
+          id="lessonActivity"
+          style="white-space:pre-line"
+        ></div>
+
+      </div>
+
+    </article>
+
+    <div>
+
+      <div class="lesson-photo">
+
+        <img id="lessonImage" alt="Тақырып суреті">
+
+        <div class="photo-caption">
+          <strong id="photoTitle"></strong>
+          <p id="photoText"></p>
+        </div>
+
+      </div>
+
+      <div class="note">
+        📒 Студенттер ереже мен жаңа сөздерді
+        дәптерге жазады. Мұғалім келесі
+        тақырыпқа өзі өтеді.
+        Әр бетте жеке уақыт шектеуі жоқ.
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="navigation">
+
+    <button class="btn secondary" id="previousButton">
+      ← Алдыңғы тақырып
+    </button>
+
+    <button class="btn purple" id="nextButton">
+      Келесі тақырып →
+    </button>
+
+  </div>
+
+</section>
+
+<!-- ЕКІ ДЕҢГЕЙЛІ БАТЛ -->
+
+<section class="screen" id="battleScreen">
+
+  <div class="level-banner" id="levelBanner">
+
+    <div>
+      <span class="badge" id="levelBadge">
+        1-ДЕҢГЕЙ
+      </span>
+
+      <h2 id="levelTitle">
+        🟢 Бірінші ойын
+      </h2>
+
+      <p id="levelDescription">
+        20 жеңіл және орташа сұрақ.
+      </p>
+    </div>
+
+    <div class="timer-box">
+      <small>СҰРАҚҚА ҚАЛҒАН УАҚЫТ</small>
+      <strong id="roundClock">00:30</strong>
+    </div>
+
+  </div>
+
+  <div class="section-header">
+    <div>
+      <h2>⚔️ Conditional Battle</h2>
+      <p class="muted" id="questionCounter">
+        1 / 20 сұрақ
+      </p>
+    </div>
+
+    <span class="badge" id="totalCounter">
+      Жалпы 1 / 40
+    </span>
+  </div>
+
+  <div class="progress">
+    <div
+      class="progress-fill"
+      id="battleProgress"
+    ></div>
+  </div>
+
+  <div class="scoreboard" id="scoreboard"></div>
+
+  <div class="battle-grid">
+
+    <div class="card question-card">
+
+      <span class="badge" id="questionType"></span>
+
+      <h2 id="questionText"></h2>
+
+      <h3 class="subheading">
+        Жауап нұсқалары
+      </h3>
+
+      <div class="choices-list" id="choicesList"></div>
+
+      <div id="teamAnswerArea"></div>
+
+      <div class="feedback" id="feedback"></div>
+
+    </div>
+
+    <div class="side">
+
+      <div class="card">
+
+        <h3>⏱ Таймер</h3>
+
+        <div class="round-time" id="bigTimer">
+          30
+        </div>
+
+        <div class="progress">
+          <div
+            class="progress-fill"
+            id="roundProgress"
+            style="width:100%"
+          ></div>
+        </div>
+
+        <p>
+          Үш команда жауап беріп болғанда
+          келесі тапсырма автоматты ашылады.
+        </p>
+
+      </div>
+
+      <div class="card">
+
+        <h3>🏅 Ұпай жүйесі</h3>
+
+        <p>✅ Дұрыс жауап: +10</p>
+        <p>⚡ Жылдам жауап: +5</p>
+        <p>❌ Қате жауап: 0</p>
+
+        <p>
+          Дұрыс жауаптар үш команда
+          жауап бергеннен кейін көрсетіледі.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ҚОРЫТЫНДЫ -->
+
+<section class="screen" id="resultsScreen">
+
+  <div class="winner-card">
+
+    <div class="trophy">🏆</div>
+
+    <span class="badge">
+      CONDITIONAL BATTLE АЯҚТАЛДЫ
+    </span>
+
+    <h2
+      id="winnerTitle"
+      style="margin-top:20px"
+    ></h2>
+
+    <p id="winnerDescription"></p>
+
+  </div>
+
+  <div class="card">
+
+    <h2>📊 Командалардың нәтижелері</h2>
+
+    <div style="overflow-x:auto">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Орын</th>
+            <th>Команда</th>
+            <th>Дұрыс</th>
+            <th>Қате / жауапсыз</th>
+            <th>Ұпай</th>
+          </tr>
+        </thead>
+
+        <tbody id="resultRows"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:22px">
+
+    <h2>📚 Қателерді талдау</h2>
+
+    <p class="muted">
+      Қате немесе жауапсыз қалған
+      тапсырмалардың дұрыс жауаптары.
+    </p>
+
+    <div id="reviewList"></div>
+
+  </div>
+
+  <div style="text-align:center;margin-top:28px">
+
+    <button class="btn green big" id="restartButton">
+      🔄 Сабақты қайта бастау
+    </button>
+
+  </div>
+
+</section>
+
+</div>
+
+<footer>
+  <small>CREATED BY</small>
+  <strong>By Darkhan</strong>
+  <p>
+    Conditional Battle • English Grammar © 2026
+  </p>
+</footer>
+
+<script>
+"use strict";
+
+/* ==================================
+   КӨМЕКШІ ФУНКЦИЯЛАР
+================================== */
+
+const $ = id => document.getElementById(id);
+
+function safe(value){
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[c]);
+}
+
+function left(deadline){
+  return Math.max(
+    0,
+    Math.ceil((deadline-Date.now())/1000)
+  );
+}
+
+function timeText(seconds){
+  seconds=Math.max(0,Math.ceil(seconds));
+
+  return (
+    String(Math.floor(seconds/60)).padStart(2,"0")
+    +":"+
+    String(seconds%60).padStart(2,"0")
+  );
+}
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>{
+    s.classList.remove("active");
+  });
+
+  $(id).classList.add("active");
+
+  $("pauseButton").hidden =
+    !["lesson","battle"].includes(game.phase);
+
+  window.scrollTo(0,0);
+}
+
+/* ==================================
+   ТҮСІНДІРУ МАТЕРИАЛДАРЫ
+================================== */
+
+const lessons=[
+
+{
+  type:"1-ТАҚЫРЫП • КІРІСПЕ",
+  title:"Conditional Sentence дегеніміз не?",
+
+  text:[
+    "Conditional Sentence — ағылшын тіліндегі шартты сөйлем. Мұндай сөйлем белгілі бір шарт орындалса, қандай нәтиже болатынын көрсетеді. Мысалы, егер сабаққа жақсы дайындалсаң, жоғары баға алуың мүмкін. Мұнда дайындалу — шарт, ал баға алу — нәтиже.",
+
+    "Шартты сөйлем әдетте екі бөліктен құралады. Біріншісі If clause, яғни шарт бөлігі. Екіншісі Main clause, яғни нәтиже бөлігі. If сөзі «егер» деген мағынаны білдіреді.",
+
+    "Ағылшын тіліндегі төрт негізгі түрі бар: Zero, First, Second және Third Conditional. Олардың әрқайсысы әртүрлі жағдайды білдіреді."
+  ],
+
+  formula:"If + шарт, нәтиже",
+
+  examples:[
+    ["If I study, I will succeed.","Оқысам, жетістікке жетемін."],
+    ["If it rains, the ground gets wet.","Жаңбыр жауса, жер суланады."],
+    ["If I had money, I would travel.","Ақшам болса, саяхаттар едім."]
+  ],
+
+  remember:
+    "Шартты сөйлемнің екі бөлігі бар: шарт және нәтиже. If — «егер».",
+
+  mistake:
+    "If міндетті түрде сөйлемнің басында тұруы қажет емес. Мысалы: I will call you if I have time.",
+
+  notebook:
+    "Conditional Sentence — шартты сөйлем.\n"+
+    "If clause — шарт бөлігі.\n"+
+    "Main clause — нәтиже бөлігі.\n"+
+    "Түрлері: Zero, First, Second, Third.",
+
+  words:[
+    ["condition","шарт"],
+    ["result","нәтиже"],
+    ["sentence","сөйлем"],
+    ["if","егер"]
+  ],
+
+  activity:
+    "1. If I study, I will succeed сөйлеміндегі шартты табыңдар.\n"+
+    "2. Нәтижесін анықтаңдар.\n"+
+    "3. Өз мысалдарыңды айтыңдар.",
+
+  image:"photo-1503676260728-1c00da094a0",
+  imageTitle:"IF = ЕГЕР",
+  imageText:"Шарт және нәтиже"
+},
+
+{
+  type:"2-ТАҚЫРЫП • СӨЙЛЕМ ҚҰРЫЛЫСЫ",
+  title:"Шартты сөйлем қалай құралады?",
+
+  text:[
+    "Шартты сөйлем құрастыру үшін алдымен шарт пен нәтижені анықтаймыз. Мысалы: Егер үй тапсырмамды орындасам, футбол ойнаймын. Бұл сөйлемде үй жұмысын аяқтау шарт болып табылады.",
+
+    "If clause сөйлемнің басында тұрса, шарт бөлігінен кейін үтір қойылады. Егер негізгі нәтиже сөйлемнің басында келсе, үтір әдетте қажет емес.",
+
+    "Шартты сөйлем құрастыруда ең маңызды қадам — оның мағынасын анықтау. Ол жалпы факт пе, болашақтағы мүмкіндік пе, қиял ма немесе өткен оқиға ма?"
+  ],
+
+  formula:
+    "If + clause, main clause\n"+
+    "Main clause + if + clause",
+
+  examples:[
+    ["If I am hungry, I eat.","Қарным ашса, тамақ жеймін."],
+    ["I eat if I am hungry.","Қарным ашса, тамақ жеймін."],
+    ["If I finish my homework, I will play.","Үй жұмысымды аяқтасам, ойнаймын."]
+  ],
+
+  remember:
+    "If сөйлем басында тұрса, шарттан кейін үтір қойылады.",
+
+  mistake:
+    "Қате: If I hungry, I eat. Дұрыс: If I am hungry, I eat.",
+
+  notebook:
+    "If clause — шарт.\n"+
+    "Main clause — нәтиже.\n"+
+    "If + шарт, нәтиже.\n"+
+    "Мысал: If I study, I will succeed.",
+
+  words:[
+    ["clause","сөйлем бөлігі"],
+    ["hungry","аш"],
+    ["finish","аяқтау"],
+    ["homework","үй тапсырмасы"]
+  ],
+
+  activity:
+    "If she studies, she learns more.\n"+
+    "Шарт пен нәтижені ажыратыңдар.\n"+
+    "Екі бөліктің орнын ауыстырып жазыңдар.",
+
+  image:"photo-1456513080510-7bf3a84b82f8",
+  imageTitle:"TWO PARTS",
+  imageText:"If clause + Main clause"
+},
+
+{
+  type:"3-ТАҚЫРЫП • ZERO CONDITIONAL",
+  title:"Zero Conditional — жалпы заңдылық",
+
+  text:[
+    "Zero Conditional ғылыми фактілерді, табиғат заңдарын және үнемі қайталанатын жағдайларды сипаттайды. Мұндай сөйлемдерде шарт орындалса, нәтиже де тұрақты түрде болады.",
+
+    "Мысалы, мұзды қыздырсақ, ол ериді. Бұл — ғылыми заңдылық. Сондықтан екі бөлікте де Present Simple қолданылады.",
+
+    "Zero Conditional тек табиғат заңдары үшін емес, күнделікті өмірдегі тұрақты әдеттер үшін де қолданылады."
+  ],
+
+  formula:"If + Present Simple, Present Simple",
+
+  examples:[
+    ["If you heat ice, it melts.","Мұзды қыздырсаң, ол ериді."],
+    ["If water freezes, it becomes ice.","Су қатса, мұзға айналады."],
+    ["If plants don't get water, they die.","Өсімдіктер су алмаса, қурайды."]
+  ],
+
+  remember:
+    "Zero Conditional — жалпы шындық. Екі бөлікте Present Simple қолданылады.",
+
+  mistake:
+    "Қате: If you heat ice, it will melts. Дұрыс: If you heat ice, it melts.",
+
+  notebook:
+    "ZERO CONDITIONAL\n"+
+    "Жалпы факт және табиғат заңдары.\n"+
+    "If + Present Simple, Present Simple.\n"+
+    "Мысал: If you heat ice, it melts.",
+
+  words:[
+    ["heat","қыздыру"],
+    ["melt","еру"],
+    ["freeze","қату"],
+    ["ice","мұз"]
+  ],
+
+  activity:
+    "If you heat ice, it ... (melt).\n"+
+    "If plants don't get water, they ... (die).\n"+
+    "Етістіктерді дұрыс қойыңдар.",
+
+  image:"photo-1497633762265-9d179a990aa6",
+  imageTitle:"ZERO CONDITIONAL",
+  imageText:"Әрдайым қайталанатын нәтиже"
+},
+
+{
+  type:"4-ТАҚЫРЫП • PRESENT SIMPLE",
+  title:"Zero Conditional: етістік формалары",
+
+  text:[
+    "Present Simple шақта етістіктің формасы бастауышқа байланысты өзгереді. I, You, We және They есімдіктерімен негізгі етістік қолданылады.",
+
+    "Ал He, She және It есімдіктерімен етістікке көбінесе -s немесе -es жалғанады. Мысалы: She learns, He works.",
+
+    "Болымсыз сөйлемдерде don't және doesn't қолданылады. Zero Conditional-де бұл формалар күнделікті әдеттерді сипаттауға көмектеседі."
+  ],
+
+  formula:
+    "I / You / We / They + V1\n"+
+    "He / She / It + V1+s/es",
+
+  examples:[
+    ["If she studies, she learns.","Ол оқыса, білім алады."],
+    ["If I feel tired, I rest.","Шаршасам, демаламын."],
+    ["If you press the button, the light turns on.","Батырманы бассаң, шам жанады."]
+  ],
+
+  remember:
+    "He, She, It есімдіктерімен -s немесе -es жалғауын ұмытпаңдар.",
+
+  mistake:
+    "Қате: If she study, she learn. Дұрыс: If she studies, she learns.",
+
+  notebook:
+    "Present Simple:\n"+
+    "I / You / We / They + V1.\n"+
+    "He / She / It + V1+s/es.\n"+
+    "Don't / doesn't — болымсыз түр.",
+
+  words:[
+    ["study","оқу"],
+    ["learn","үйрену"],
+    ["press","басу"],
+    ["rest","демалу"]
+  ],
+
+  activity:
+    "If she studies, she ... (learn).\n"+
+    "If they work, they ... (earn) money.\n"+
+    "Дұрыс нұсқаларды таңдаңдар.",
+
+  image:"photo-1434030216411-0b793f4b4173",
+  imageTitle:"PRESENT + PRESENT",
+  imageText:"Етістіктердің дұрыс формасы"
+},
+
+{
+  type:"5-ТАҚЫРЫП • FIRST CONDITIONAL",
+  title:"First Conditional — болашақ мүмкіндік",
+
+  text:[
+    "First Conditional болашақта орын алуы мүмкін жағдайларды білдіреді. Мысалы, егер көп дайындалсаң, емтиханнан өтуің мүмкін.",
+
+    "Шарт бөлігінде Present Simple, ал нәтиже бөлігінде will + V1 қолданылады. If сөзінен кейін әдетте will қолданылмайды.",
+
+    "First Conditional арқылы жоспарды, уәдені, ескертуді және болашақтағы ықтимал нәтижені білдіруге болады."
+  ],
+
+  formula:"If + Present Simple, will + V1",
+
+  examples:[
+    ["If I study, I will pass the exam.","Оқысам, емтиханнан өтемін."],
+    ["If it rains tomorrow, we will stay home.","Ертең жаңбыр жауса, үйде қаламыз."],
+    ["If you call me, I will answer.","Хабарлассаң, жауап беремін."]
+  ],
+
+  remember:
+    "First Conditional — болашақта болуы мүмкін нақты жағдай.",
+
+  mistake:
+    "Қате: If I will study, I will pass. Дұрыс: If I study, I will pass.",
+
+  notebook:
+    "FIRST CONDITIONAL\n"+
+    "Болашақтағы нақты мүмкіндік.\n"+
+    "If + Present Simple, will + V1.\n"+
+    "Мысал: If I study, I will pass.",
+
+  words:[
+    ["future","болашақ"],
+    ["tomorrow","ертең"],
+    ["pass","өту"],
+    ["exam","емтихан"]
+  ],
+
+  activity:
+    "If I study English, I will ...\n"+
+    "If it rains tomorrow, I will ...\n"+
+    "Сөйлемдерді аяқтаңдар.",
+
+  image:"photo-1522202176988-66273c2fd55f",
+  imageTitle:"FIRST CONDITIONAL",
+  imageText:"Болашақтағы нақты мүмкіндік"
+},
+
+{
+  type:"6-ТАҚЫРЫП • FIRST CONDITIONAL",
+  title:"First Conditional: болымсыз түрі",
+
+  text:[
+    "Болымсыз шартты сөйлемдер белгілі бір әрекет орындалмаса қандай нәтиже болатынын көрсетеді. Мысалы, асықпасаң, автобустан қалуың мүмкін.",
+
+    "Don't және doesn't шарт бөлігін болымсыз етеді. Won't нәтиженің болмайтынын білдіреді. Won't — will not сөзінің қысқартылған түрі.",
+
+    "Unless сөзі «егер ... болмаса» дегенді білдіреді. Мысалы: Unless you study, you won't pass."
+  ],
+
+  formula:
+    "If + don't/doesn't + V1, will/won't + V1",
+
+  examples:[
+    ["If you don't hurry, you will miss the bus.","Асықпасаң, автобустан қаласың."],
+    ["If I don't study, I won't pass.","Оқымасам, емтиханнан өтпеймін."],
+    ["Unless you practice, you won't improve.","Жаттығу жасамасаң, жақсармайсың."]
+  ],
+
+  remember:
+    "Won't = will not. Unless = if ... not.",
+
+  mistake:
+    "Қате: Unless you don't study, you won't pass. Дұрыс: Unless you study, you won't pass.",
+
+  notebook:
+    "FIRST CONDITIONAL — болымсыз түрі.\n"+
+    "Don't / doesn't.\n"+
+    "Won't = will not.\n"+
+    "Unless = if ... not.",
+
+  words:[
+    ["hurry","асығу"],
+    ["miss","үлгермей қалу"],
+    ["unless","егер ... болмаса"],
+    ["improve","жақсару"]
+  ],
+
+  activity:
+    "If I don't do my homework, ...\n"+
+    "Unless I practice, ...\n"+
+    "Сөйлемдерді өз ойларыңмен аяқтаңдар.",
+
+  image:"photo-1516321318423-f06f85e504b3",
+  imageTitle:"IF / UNLESS",
+  imageText:"Болымсыз шарттар"
+},
+
+{
+  type:"7-ТАҚЫРЫП • SECOND CONDITIONAL",
+  title:"Second Conditional — қиялдағы жағдай",
+
+  text:[
+    "Second Conditional қазіргі немесе болашақтағы шындыққа сай келмейтін, қиялдағы немесе ықтималдығы төмен жағдайларды білдіреді.",
+
+    "Мысалы, егер мен миллионер болсам, әлемді аралар едім. Мұнда адам өзінің қиялындағы жағдай туралы айтып тұр.",
+
+    "Бұл құрылымда If бөлігінде Past Simple, ал нәтижеде would + V1 қолданылады. Past Simple формасы болғанымен, әңгіме міндетті түрде өткен уақыт туралы емес."
+  ],
+
+  formula:"If + Past Simple, would + V1",
+
+  examples:[
+    ["If I had money, I would travel.","Ақшам болса, саяхаттар едім."],
+    ["If I could fly, I would visit many countries.","Ұша алсам, көптеген елге барар едім."],
+    ["If I lived in London, I would speak English.","Лондонда тұрсам, ағылшынша сөйлер едім."]
+  ],
+
+  remember:
+    "Second Conditional — қиялдағы немесе екіталай жағдай.",
+
+  mistake:
+    "Қате: If I had money, I will travel. Дұрыс: If I had money, I would travel.",
+
+  notebook:
+    "SECOND CONDITIONAL\n"+
+    "Қиялдағы жағдай.\n"+
+    "If + Past Simple, would + V1.\n"+
+    "Мысал: If I were rich, I would travel.",
+
+  words:[
+    ["would","-ар еді / -ер еді"],
+    ["rich","бай"],
+    ["travel","саяхаттау"],
+    ["dream","арман"]
+  ],
+
+  activity:
+    "What would you do if you had a million dollars?\n"+
+    "Осы сұраққа ағылшынша жауап құрастырыңдар.",
+
+  image:"photo-1509062522246-3755977927d7",
+  imageTitle:"SECOND CONDITIONAL",
+  imageText:"Қиялдағы мүмкіндіктер"
+},
+
+{
+  type:"8-ТАҚЫРЫП • КЕҢЕС БЕРУ",
+  title:"If I were you — кеңес беру",
+
+  text:[
+    "Second Conditional арқылы біреуге кеңес беруге болады. Ағылшын тіліндегі If I were you тіркесі «Егер мен сенің орныңда болсам» деген мағынаны білдіреді.",
+
+    "Мысалы, досың ағылшын тілін үйренгісі келеді. Сен оған If I were you, I would practice every day деп кеңес бере аласың.",
+
+    "Бұл тіркес сыпайы кеңес беру үшін пайдалы. Would сөзінен кейін етістіктің негізгі формасы қолданылады."
+  ],
+
+  formula:"If I were you, I would + V1",
+
+  examples:[
+    ["If I were you, I would study English.","Сенің орныңда болсам, ағылшын тілін оқыр едім."],
+    ["If I were you, I would read more books.","Сенің орныңда болсам, көбірек кітап оқыр едім."],
+    ["If I were you, I would ask the teacher.","Сенің орныңда болсам, мұғалімнен сұрар едім."]
+  ],
+
+  remember:
+    "If I were you — кеңес беру үшін қолданылатын тұрақты тіркес.",
+
+  mistake:
+    "Қате: If I were you, I would studying. Дұрыс: If I were you, I would study.",
+
+  notebook:
+    "IF I WERE YOU...\n"+
+    "Мағынасы: Сенің орныңда болсам.\n"+
+    "Формула: If I were you, I would + V1.",
+
+  words:[
+    ["advice","кеңес"],
+    ["ask","сұрау"],
+    ["choose","таңдау"],
+    ["practice","жаттығу жасау"]
+  ],
+
+  activity:
+    "Жұптық жұмыс: бір студент мәселе айтады, екіншісі If I were you... арқылы кеңес береді.",
+
+  image:"photo-1497486751825-1233686d5d80",
+  imageTitle:"IF I WERE YOU",
+  imageText:"Сыпайы кеңес беру"
+},
+
+{
+  type:"9-ТАҚЫРЫП • THIRD CONDITIONAL",
+  title:"Third Conditional — өткен уақыт",
+
+  text:[
+    "Third Conditional өткен уақытта болмаған жағдай туралы болжам жасауға арналған. Ол бұрынғы әрекет басқаша болғанда нәтиже қандай болуы мүмкін екенін көрсетеді.",
+
+    "Мысалы: If I had studied harder, I would have passed. Егер көбірек оқығанымда, емтиханнан өтер едім.",
+
+    "Мұндай құрылымда had + V3 және would have + V3 қолданылады. V3 — етістіктің үшінші формасы."
+  ],
+
+  formula:"If + had + V3, would have + V3",
+
+  examples:[
+    ["If I had studied, I would have passed.","Оқығанымда, емтиханнан өтер едім."],
+    ["If she had left earlier, she would have arrived on time.","Ертерек шыққанда, уақытында жетер еді."],
+    ["If I had known, I would have helped.","Білгенімде, көмектесер едім."]
+  ],
+
+  remember:
+    "Third Conditional — өткен уақытта болмаған жағдай туралы болжам.",
+
+  mistake:
+    "Қате: If I had study, I would passed. Дұрыс: If I had studied, I would have passed.",
+
+  notebook:
+    "THIRD CONDITIONAL\n"+
+    "Өткен уақыттағы болмаған жағдай.\n"+
+    "If + had + V3, would have + V3.\n"+
+    "Мысал: If I had known, I would have helped.",
+
+  words:[
+    ["past","өткен уақыт"],
+    ["regret","өкіну"],
+    ["known","білген"],
+    ["earlier","ертерек"]
+  ],
+
+  activity:
+    "Етістіктердің V3 формасын жазыңдар:\n"+
+    "Go — ...\nSee — ...\nDo — ...\nWrite — ...",
+
+  image:"photo-1513258496099-48168024aec0",
+  imageTitle:"THIRD CONDITIONAL",
+  imageText:"Өткен оқиға туралы болжам"
+},
+
+{
+  type:"10-ТАҚЫРЫП • ҚАЙТАЛАУ",
+  title:"Төрт Conditional түрін салыстыру",
+
+  text:[
+    "Біз шартты сөйлемдердің төрт негізгі түрін меңгердік. Zero Conditional — жалпы заңдылық. First Conditional — болашақтағы нақты мүмкіндік.",
+
+    "Second Conditional — қиялдағы немесе екіталай жағдай. Third Conditional — өткен уақытта болмаған оқиға туралы болжам.",
+
+    "Енді осы ережелерді екі деңгейлі батлда қолданамыз. Бірінші деңгейде жеңілдеу сұрақтар, екінші деңгейде күрделірек тапсырмалар болады."
+  ],
+
+  formula:
+    "ZERO: Present + Present\n"+
+    "FIRST: Present + will + V1\n"+
+    "SECOND: Past + would + V1\n"+
+    "THIRD: had + V3 → would have + V3",
+
+  examples:[
+    ["If you heat ice, it melts.","Zero — жалпы факт."],
+    ["If I study, I will pass.","First — болашақ мүмкіндік."],
+    ["If I had money, I would travel.","Second — қиялдағы жағдай."],
+    ["If I had studied, I would have passed.","Third — өткен жағдай."]
+  ],
+
+  remember:
+    "Zero — факт. First — болашақ. Second — қиял. Third — өткен уақыт.",
+
+  mistake:
+    "Барлық Conditional түріне бір формула қолдануға болмайды. Ең алдымен сөйлемнің мағынасын анықтаңдар.",
+
+  notebook:
+    "ҚОРЫТЫНДЫ\n"+
+    "Zero — Present + Present.\n"+
+    "First — Present + will.\n"+
+    "Second — Past + would.\n"+
+    "Third — had + V3, would have + V3.",
+
+  words:[
+    ["fact","факт"],
+    ["future","болашақ"],
+    ["imaginary","қиялдағы"],
+    ["possibility","мүмкіндік"]
+  ],
+
+  activity:
+    "Әр команда төрт Conditional түріне бір мысалдан айтып шықсын.\n"+
+    "Дайын болсаңдар, «Ойынға көшу» батырмасын басыңдар.",
+
+  image:"photo-1523240795612-9a054b0db644",
+  imageTitle:"READY FOR BATTLE?",
+  imageText:"Екі деңгейлі ойын басталады!"
+}
+
+];
+
+/* ==================================
+   СҰРАҚ ҚҰРАСТЫРУ
+================================== */
+
+function Q(type,text,options,correct,explanation){
+  return {
+    type,
+    text,
+    options,
+    correct,
+    explanation
+  };
+}
+
+/* ==================================
+   1-ДЕҢГЕЙ: 20 СҰРАҚ
+================================== */
+
+const level1=[
+
+Q(
+  "ZERO CONDITIONAL",
+  "If you heat ice, it ...",
+  ["melt","melts","will melt","melted"],
+  1,
+  "Zero Conditional-де Present Simple қолданылады: it melts."
+),
+
+Q(
+  "ZERO CONDITIONAL",
+  "If water freezes, it ... ice.",
+  ["become","becomes","became","would become"],
+  1,
+  "Water жекеше болғандықтан becomes қолданылады."
+),
+
+Q(
+  "FIRST CONDITIONAL",
+  "If I study hard, I ... the exam.",
+  ["pass","passed","will pass","would pass"],
+  2,
+  "First Conditional: If + Present Simple, will + V1."
+),
+
+Q(
+  "FIRST CONDITIONAL",
+  "If it rains tomorrow, we ... home.",
+  ["stayed","will stay","would stay","staying"],
+  1,
+  "Болашақтағы мүмкіндік: will stay."
+),
+
+Q(
+  "ZERO CONDITIONAL",
+  "Zero Conditional формуласы қандай?",
+  [
+    "Past + would",
+    "Present + Present",
+    "Present + will",
+    "had + V3"
+  ],
+  1,
+  "Zero Conditional екі бөлігінде де Present Simple қолданылады."
+),
+
+Q(
+  "ZERO CONDITIONAL",
+  "If she studies, she ... more.",
+  ["learn","learns","learned","learning"],
+  1,
+  "She есімдігімен learns қолданылады."
+),
+
+Q(
+  "FIRST CONDITIONAL",
+  "If she ... early, we will start.",
+  ["come","will come","came","comes"],
+  3,
+  "If бөлігінде Present Simple: she comes."
+),
+
+Q(
+  "ZERO CONDITIONAL",
+  "If you press the button, the light ... on.",
+  ["turn","turns","turned","would turn"],
+  1,
+  "The light — жекеше, сондықтан turns қолданылады."
+),
+
+Q(
+  "FIRST CONDITIONAL",
+  "Unless you study, you ... pass.",
+  ["don't","didn't","won't","wouldn't"],
+  2,
+  "Unless = if ... not. Нәтиже: won't pass."
+),
+
+Q(
+  "SECOND CONDITIONAL",
+  "If I had more money, I ... a laptop.",
+  ["buy","will buy","would buy","bought"],
+  2,
+  "Second Conditional нәтижесінде would + V1 болады."
+),
+
+Q(
+  "SECOND CONDITIONAL",
+  "If I were you, I ... study English.",
+  ["will","would","am","have"],
+  1,
+  "If I were you, I would study English."
+),
+
+Q(
+  "THIRD CONDITIONAL",
+  "If I had studied, I ... the exam.",
+  [
+    "will pass",
+    "would pass",
+    "would have passed",
+    "pass"
+  ],
+  2,
+  "Third Conditional-де would have + V3 қолданылады."
+),
+
+Q(
+  "ZERO CONDITIONAL",
+  "If he doesn't sleep enough, he ... tired.",
+  ["feel","feels","felt","would feel"],
+  1,
+  "He есімдігімен feels қолданылады."
+),
+
+Q(
+  "FIRST CONDITIONAL",
+  "If we finish our homework, we ... football.",
+  ["played","would play","will play","playing"],
+  2,
+  "Болашақ нәтиже: will play."
+),
+
+Q(
+  "SECOND CONDITIONAL",
+  "If I could fly, I ... around the world.",
+  ["travel","would travel","will travel","traveled"],
+  1,
+  "Қиялдағы нәтиже: would travel."
+),
+
+Q(
+  "THIRD CONDITIONAL",
+  "If I had known, I ... you.",
+  ["will help","would help","would have helped","help"],
+  2,
+  "Would have helped — Third Conditional."
+),
+
+Q(
+  "FIRST CONDITIONAL",
+  "Дұрыс сөйлемді таңда.",
+  [
+    "If I will see him, I tell him.",
+    "If I see him, I will tell him.",
+    "If I saw him, I will tell him.",
+    "If I seeing him, I tell him."
+  ],
+  1,
+  "If + Present Simple, will + V1."
+),
+
+Q(
+  "ZERO CONDITIONAL",
+  "If water boils, it ... into steam.",
+  ["turn","turns","turned","turning"],
+  1,
+  "Бұл жалпы заңдылық, сондықтан turns қолданылады."
+),
+
+Q(
+  "ZERO CONDITIONAL",
+  "If plants don't get water, they ...",
+  ["dies","die","dying","died"],
+  1,
+  "They есімдігімен негізгі етістік die қолданылады."
+),
+
+Q(
+  "FIRST CONDITIONAL",
+  "If it is sunny tomorrow, we ... for a walk.",
+  ["go","went","would go","will go"],
+  3,
+  "Болашақтағы нақты мүмкіндік: will go."
+)
+
+];
+
+/* ==================================
+   2-ДЕҢГЕЙ: 20 КҮРДЕЛІ СҰРАҚ
+================================== */
+
+const level2=[
+
+Q(
+  "КҮРДЕЛІ • UNLESS",
+  "Қай сөйлем грамматикалық тұрғыдан дұрыс?",
+  [
+    "Unless you will hurry, you miss the bus.",
+    "Unless you hurry, you will miss the bus.",
+    "Unless you hurried, you will miss the bus.",
+    "Unless you don't hurry, you will miss the bus."
+  ],
+  1,
+  "Unless you hurry = If you don't hurry. Бұл First Conditional."
+),
+
+Q(
+  "КҮРДЕЛІ • SECOND",
+  "«Уақытым көбірек болса, қытай тілін үйренер едім» сөйлемінің дұрыс аудармасын таңда.",
+  [
+    "If I have more time, I learn Chinese.",
+    "If I had more time, I would learn Chinese.",
+    "If I will have more time, I learn Chinese.",
+    "If I had more time, I will learn Chinese."
+  ],
+  1,
+  "Қиялдағы жағдай: If + Past Simple, would + V1."
+),
+
+Q(
+  "КҮРДЕЛІ • THIRD",
+  "If she had left earlier, she ... the train.",
+  [
+    "will catch",
+    "would catch",
+    "would have caught",
+    "catches"
+  ],
+  2,
+  "Өткен уақыттағы болжалды нәтиже: would have caught."
+),
+
+Q(
+  "КҮРДЕЛІ • ҚАТЕНІ ТАП",
+  "Қате сөйлемді анықта.",
+  [
+    "If water freezes, it becomes ice.",
+    "If I study, I will pass.",
+    "If I will study, I will pass.",
+    "If I had studied, I would have passed."
+  ],
+  2,
+  "First Conditional шарт бөлігінде әдетте will қолданылмайды."
+),
+
+Q(
+  "КҮРДЕЛІ • SECOND",
+  "If I ... the college director, I would improve the classrooms.",
+  [
+    "am",
+    "will be",
+    "were",
+    "have been"
+  ],
+  2,
+  "Қиялдағы жағдай: If I were the college director."
+),
+
+Q(
+  "КҮРДЕЛІ • THIRD",
+  "If they hadn't missed the bus, they ... late.",
+  [
+    "won't be",
+    "wouldn't be",
+    "wouldn't have been",
+    "aren't"
+  ],
+  2,
+  "Үшінші шартты сөйлемнің болымсыз нәтижесі: wouldn't have been."
+),
+
+Q(
+  "КҮРДЕЛІ • FIRST",
+  "Unless it rains, we ... outside.",
+  [
+    "would play",
+    "will play",
+    "played",
+    "would have played"
+  ],
+  1,
+  "Unless it rains = If it doesn't rain. Нәтижеде will play."
+),
+
+Q(
+  "КҮРДЕЛІ • ZERO",
+  "If you don't charge your phone, its battery eventually ... out.",
+  [
+    "run",
+    "runs",
+    "ran",
+    "would run"
+  ],
+  1,
+  "Жалпы нәтиже: battery runs out."
+),
+
+Q(
+  "КҮРДЕЛІ • THIRD",
+  "If I ... about the meeting, I would have attended.",
+  [
+    "know",
+    "knew",
+    "had known",
+    "will know"
+  ],
+  2,
+  "Third Conditional шартында had + V3: had known."
+),
+
+Q(
+  "КҮРДЕЛІ • SECOND",
+  "If she knew the answer, she ... us.",
+  [
+    "will tell",
+    "would tell",
+    "tells",
+    "had told"
+  ],
+  1,
+  "Second Conditional нәтижесінде would tell қолданылады."
+),
+
+Q(
+  "КҮРДЕЛІ • UNLESS",
+  "«Егер сен келмесең, мен бармаймын» сөйлемінің дұрыс аудармасын таңда.",
+  [
+    "I won't go unless you come.",
+    "I won't go unless you don't come.",
+    "I didn't go unless you will come.",
+    "I wouldn't went unless you come."
+  ],
+  0,
+  "Unless you come — егер сен келмесең."
+),
+
+Q(
+  "КҮРДЕЛІ • V3",
+  "Swim етістігінің үшінші формасы қандай?",
+  [
+    "swam",
+    "swimming",
+    "swum",
+    "swims"
+  ],
+  2,
+  "Swim — swam — swum. Үшінші форма: swum."
+),
+
+Q(
+  "КҮРДЕЛІ • SECOND",
+  "If I were you, I ... that mistake again.",
+  [
+    "won't make",
+    "didn't make",
+    "wouldn't make",
+    "haven't made"
+  ],
+  2,
+  "Кеңес беру: If I were you, I wouldn't make that mistake again."
+),
+
+Q(
+  "КҮРДЕЛІ • МАҒЫНАСЫ",
+  "«Егер бұрын көбірек дайындалғанымда, жеңіске жетер едім» деген ойды қай Conditional арқылы жеткіземіз?",
+  [
+    "Zero Conditional",
+    "First Conditional",
+    "Second Conditional",
+    "Third Conditional"
+  ],
+  3,
+  "Өткен уақытта болмаған жағдай туралы болжам — Third Conditional."
+),
+
+Q(
+  "КҮРДЕЛІ • СҰРАҚ",
+  "First Conditional бойынша дұрыс сұрақты таңда.",
+  [
+    "What you will do if it rains?",
+    "What will you do if it rains?",
+    "What would you do if it will rain?",
+    "What will you do if it will rain?"
+  ],
+  1,
+  "Дұрыс құрылым: What will you do if it rains?"
+),
+
+Q(
+  "КҮРДЕЛІ • THIRD",
+  "If I had set an alarm, I ... late.",
+  [
+    "wouldn't have woken up",
+    "wouldn't wake up",
+    "won't wake up",
+    "didn't wake up"
+  ],
+  0,
+  "Өткен жағдайдың басқа нәтижесі: wouldn't have woken up late."
+),
+
+Q(
+  "КҮРДЕЛІ • ZERO",
+  "If he doesn't do his homework, he usually ... into trouble.",
+  [
+    "get",
+    "gets",
+    "got",
+    "would get"
+  ],
+  1,
+  "Usually жалпы әдетті білдіреді: he gets into trouble."
+),
+
+Q(
+  "КҮРДЕЛІ • FIRST",
+  "«Егер жарыста жеңсем, қуанышымды достарыммен бөлісемін» сөйлеміне дұрыс құрылымды таңда.",
+  [
+    "If I won, I would share the news.",
+    "If I win, I will share the news.",
+    "If I had won, I would have shared the news.",
+    "If I win, I would have shared the news."
+  ],
+  1,
+  "Болашақтағы нақты мүмкіндік: If I win, I will share."
+),
+
+Q(
+  "КҮРДЕЛІ • THIRD",
+  "Қате етістік формасын түзет: If they had went earlier, they would have seen us.",
+  [
+    "had go",
+    "have gone",
+    "had gone",
+    "had going"
+  ],
+  2,
+  "Go — went — gone. Past Perfect: had gone."
+),
+
+Q(
+  "СУПЕР ФИНАЛ • MIXED",
+  "Соңғы күрделі сұрақ! If I had been more careful, I ... it.",
+  [
+    "won't break",
+    "wouldn't break",
+    "wouldn't have broken",
+    "don't break"
+  ],
+  2,
+  "Third Conditional: If + had + V3, would have + V3."
+)
+
+];
+
+const allQuestions=[...level1,...level2];
+
+/* ==================================
+   ОЙЫН КҮЙІ
+================================== */
+
+const LESSON_MS=20*60*1000;
+const QUESTION_MS=30*1000;
+const FEEDBACK_MS=1200;
+
+const game={
+  phase:"home",
+  teams:[],
+
+  slide:0,
+  lessonStart:0,
+  lessonEnd:0,
+
+  questionIndex:0,
+  roundEnd:0,
+  nextAt:0,
+
+  responses:[null,null,null],
+  revealed:false,
+
+  history:[],
+
+  paused:false,
+  pausedAt:0
+};
+
+/* ==================================
+   САБАҚТЫ БАСТАУ
+================================== */
+
+function startLesson(){
+
+  const defaults=["Жалын","Қыран","Білім"];
+
+  game.teams=[1,2,3].map((n,i)=>({
+    name:$("team"+n).value.trim()||defaults[i],
+    score:0,
+    correct:0,
+    wrong:0,
+    missed:0,
+    bonuses:0
+  }));
+
+  game.phase="lesson";
+  game.slide=0;
+
+  game.lessonStart=Date.now();
+  game.lessonEnd=game.lessonStart+LESSON_MS;
+
+  game.questionIndex=0;
+  game.history=[];
+
+  game.paused=false;
+
+  $("phaseLabel").textContent="1-бөлім • Теория";
+  $("pauseButton").textContent="⏸ Үзіліс";
+
+  show("lessonScreen");
+  renderLesson();
+  tick();
+}
+
+/* ==================================
+   ТҮСІНДІРУ БЕТІ
+================================== */
+
+function renderLesson(){
+
+  const d=lessons[game.slide];
+
+  $("lessonCount").textContent=
+    (game.slide+1)+" / "+lessons.length+" тақырып";
+
+  $("lessonType").textContent=d.type;
+  $("lessonTitle").textContent=d.title;
+
+  $("lessonText").innerHTML=d.text.map(p=>
+    "<p>"+safe(p)+"</p>"
+  ).join("");
+
+  $("lessonFormula").textContent=d.formula;
+
+  $("lessonExamples").innerHTML=d.examples.map(x=>`
+    <div class="example">
+      <b>${safe(x[0])}</b>
+      <span>${safe(x[1])}</span>
+    </div>
+  `).join("");
+
+  $("lessonRemember").textContent=d.remember;
+  $("lessonMistake").textContent=d.mistake;
+  $("lessonNotebook").textContent=d.notebook;
+  $("lessonActivity").textContent=d.activity;
+
+  $("lessonWords").innerHTML=d.words.map(w=>`
+    <div class="word">
+      <b>${safe(w[0])}</b>
+      <span>${safe(w[1])}</span>
+    </div>
+  `).join("");
+
+  $("photoTitle").textContent=d.imageTitle;
+  $("photoText").textContent=d.imageText;
+
+  const img=$("lessonImage");
+
+  img.style.display="block";
+  img.src=
+    "https://images.unsplash.com/"+d.image+"?w=1100&q=85";
+
+  img.onerror=function(){
+    this.style.display="none";
+  };
+
+  $("previousButton").disabled=game.slide===0;
+
+  // Соңғы тақырыпта батырма өзгереді.
+  if(game.slide===lessons.length-1){
+
+    $("nextButton").textContent=
+      "⚔️ Ойынға көшу →";
+
+    $("nextButton").classList.remove("purple");
+    $("nextButton").classList.add("green");
+
+  }else{
+
+    $("nextButton").textContent=
+      "Келесі тақырып →";
+
+    $("nextButton").classList.remove("green");
+    $("nextButton").classList.add("purple");
+
+  }
+}
+
+function previousLesson(){
+
+  if(game.phase!=="lesson"||game.paused)return;
+
+  if(game.slide>0){
+    game.slide--;
+    renderLesson();
+    window.scrollTo(0,0);
+  }
+}
+
+function nextLesson(){
+
+  if(game.phase!=="lesson"||game.paused)return;
+
+  if(game.slide===lessons.length-1){
+    startBattle();
+    return;
+  }
+
+  game.slide++;
+  renderLesson();
+
+  window.scrollTo(0,0);
+}
+
+/* ==================================
+   БАТЛДЫ БАСТАУ
+================================== */
+
+function startBattle(){
+
+  if(game.phase!=="lesson")return;
+
+  game.phase="battle";
+  game.questionIndex=0;
+  game.paused=false;
+
+  $("phaseLabel").textContent=
+    "2-бөлім • Екі деңгейлі батл";
+
+  show("battleScreen");
+
+  startQuestion();
+}
+
+/* ==================================
+   КЕЛЕСІ СҰРАҚТЫ БАСТАУ
+================================== */
+
+function startQuestion(){
+
+  game.responses=[null,null,null];
+  game.revealed=false;
+  game.nextAt=0;
+
+  game.roundEnd=Date.now()+QUESTION_MS;
+
+  renderQuestion();
+}
+
+/* ==================================
+   ҰПАЙ ТАҚТАСЫ
+================================== */
+
+function renderScores(){
+
+  $("scoreboard").innerHTML=
+    game.teams.map((team,i)=>`
+      <div class="team-score">
+        <div class="name">
+          ${i+1}-команда: ${safe(team.name)}
+        </div>
+
+        <div class="points">${team.score}</div>
+
+        <small>
+          ${team.correct} дұрыс жауап
+        </small>
+      </div>
+    `).join("");
+}
+
+/* ==================================
+   СҰРАҚТЫ КӨРСЕТУ
+================================== */
+
+function renderQuestion(){
+
+  const q=allQuestions[game.questionIndex];
+
+  const level=game.questionIndex<20?1:2;
+  const localIndex=game.questionIndex%20;
+
+  $("levelBadge").textContent=
+    level+"-ДЕҢГЕЙ • 20 СҰРАҚ";
+
+  $("levelTitle").textContent=
+    level===1
+      ?"🟢 Бірінші ойын"
+      :"🔴 Екінші ойын — күрделі";
+
+  $("levelDescription").textContent=
+    level===1
+      ?"Жеңіл және орташа грамматикалық тапсырмалар."
+      :"Қателерді табу, күрделі аударма және аралас ережелер.";
+
+  $("levelBanner").classList.toggle(
+    "hard",
+    level===2
+  );
+
+  $("questionCounter").textContent=
+    (localIndex+1)+" / 20 сұрақ";
+
+  $("totalCounter").textContent=
+    "Жалпы "+(game.questionIndex+1)+" / 40";
+
+  $("questionType").textContent=q.type;
+  $("questionText").textContent=q.text;
+
+  $("choicesList").innerHTML=q.options.map((answer,i)=>`
+    <div class="choice">
+      <b>${String.fromCharCode(65+i)}.</b>
+      ${safe(answer)}
+    </div>
+  `).join("");
+
+  $("teamAnswerArea").innerHTML=
+    game.teams.map((team,teamIndex)=>`
+      <div class="team-answer" id="answerTeam${teamIndex}">
+
+        <h3>
+          ${teamIndex+1}-команда:
+          ${safe(team.name)}
+        </h3>
+
+        <div class="letter-options">
+
+          ${["A","B","C","D"].map((letter,answerIndex)=>`
+            <button
+              class="letter-btn"
+              data-team="${teamIndex}"
+              data-answer="${answerIndex}"
+              aria-label="${safe(team.name)}: ${letter} жауабы"
+            >
+              ${letter}
+            </button>
+          `).join("")}
+
+        </div>
+
+        <small
+          class="muted"
+          id="teamStatus${teamIndex}"
+          style="display:block;margin-top:9px"
+        >
+          Жауап күтілуде
+        </small>
+
+      </div>
+    `).join("");
+
+  $("feedback").className="feedback";
+  $("feedback").innerHTML="";
+
+  renderScores();
+  updateBattleTimer();
+}
+
+/* ==================================
+   КОМАНДАНЫҢ ЖАУАБЫН ТІРКЕУ
+================================== */
+
+function submitAnswer(teamIndex,answerIndex){
+
+  if(game.phase!=="battle")return;
+  if(game.paused)return;
+  if(game.revealed)return;
+  if(Date.now()>=game.roundEnd)return;
+
+  if(game.responses[teamIndex]!==null)return;
+
+  const remainingSeconds=left(game.roundEnd);
+
+  game.responses[teamIndex]={
+    answer:answerIndex,
+    remaining:remainingSeconds
+  };
+
+  const box=$("answerTeam"+teamIndex);
+
+  box.classList.add("answered");
+
+  box.querySelectorAll("button").forEach((button,i)=>{
+    button.disabled=true;
+
+    if(i===answerIndex){
+      button.classList.add("chosen");
+    }
+  });
+
+  $("teamStatus"+teamIndex).textContent=
+    "✅ Жауап қабылданды";
+
+  // Үш команда түгел жауап берсе,
+  // 30 секундты күтпей аяқтаймыз.
+
+  if(game.responses.every(r=>r!==null)){
+    revealAnswers();
+  }
+}
+
+/* ==================================
+   ЖАУАПТАРДЫ ТЕКСЕРУ
+================================== */
+
+function revealAnswers(){
+
+  if(game.revealed)return;
+
+  game.revealed=true;
+
+  const q=allQuestions[game.questionIndex];
+
+  const reports=[];
+
+  game.responses.forEach((response,teamIndex)=>{
+
+    const team=game.teams[teamIndex];
+
+    let earned=0;
+    let status="Жауап берілмеді";
+
+    if(response===null){
+
+      team.missed++;
+
+    }else if(response.answer===q.correct){
+
+      earned=10;
+      team.correct++;
+      status="Дұрыс жауап";
+
+      // Алғашқы 15 секундта жауап берсе
+      if(response.remaining>=15){
+        earned+=5;
+        team.bonuses++;
+      }
+
+      team.score+=earned;
+
+    }else{
+
+      team.wrong++;
+      status="Қате жауап";
+
+    }
+
+    reports.push({
+      team:team.name,
+      earned,
+      status
+    });
+
+    game.history.push({
+      questionIndex:game.questionIndex,
+      teamIndex,
+      response:response?response.answer:null,
+      correct:response!==null &&
+              response.answer===q.correct
+    });
+
+    // Әр командаға дұрыс және қате жауапты көрсету
+    const box=$("answerTeam"+teamIndex);
+
+    box.querySelectorAll("button").forEach((button,i)=>{
+
+      button.disabled=true;
+
+      if(i===q.correct){
+        button.classList.add("correct");
+      }
+
+      if(
+        response!==null &&
+        i===response.answer &&
+        response.answer!==q.correct
+      ){
+        button.classList.add("wrong");
+      }
+
+    });
+
+    $("teamStatus"+teamIndex).textContent=
+      status+(earned>0?" • +"+earned+" ұпай":"");
+
+  });
+
+  $("feedback").className="feedback show";
+
+  $("feedback").innerHTML=`
+    <strong style="font-size:20px">
+      ✅ Дұрыс жауап:
+      ${String.fromCharCode(65+q.correct)}.
+      ${safe(q.options[q.correct])}
+    </strong>
+
+    <p>${safe(q.explanation)}</p>
+
+    <div style="border-top:1px solid #578775;padding-top:12px">
+      ${reports.map(r=>`
+        <p style="margin:5px 0">
+          <b>${safe(r.team)}:</b>
+          ${safe(r.status)}
+          ${r.earned>0?" — +"+r.earned+" ұпай":""}
+        </p>
+      `).join("")}
+    </div>
+
+    <small>
+      Келесі сұрақ автоматты түрде ашылады...
+    </small>
+  `;
+
+  renderScores();
+
+  // Нәтижені 1,2 секунд көрсетіп,
+  // келесі сұраққа өтеміз.
+  game.nextAt=Date.now()+FEEDBACK_MS;
+}
+
+/* ==================================
+   КЕЛЕСІ СҰРАҚ
+================================== */
+
+function nextQuestion(){
+
+  game.questionIndex++;
+
+  // Екінші деңгей 21-сұрақтан
+  // автоматты түрде басталады.
+
+  if(game.questionIndex>=allQuestions.length){
+    finishGame();
+    return;
+  }
+
+  startQuestion();
+}
+
+/* ==================================
+   ТАЙМЕР
+================================== */
+
+function updateBattleTimer(){
+
+  const seconds=left(game.roundEnd);
+
+  $("roundClock").textContent=timeText(seconds);
+  $("bigTimer").textContent=seconds;
+
+  $("bigTimer").classList.toggle(
+    "danger",
+    seconds<=10
+  );
+
+  $("roundProgress").style.width=
+    (seconds/30*100)+"%";
+
+  $("battleProgress").style.width=
+    (game.questionIndex/40*100)+"%";
+}
+
+function tick(){
+
+  if(game.paused)return;
+
+  const now=Date.now();
+
+  if(game.phase==="lesson"){
+
+    const seconds=left(game.lessonEnd);
+
+    $("lessonTimer").textContent=timeText(seconds);
+
+    $("lessonProgress").style.width=
+      Math.min(
+        100,
+        Math.max(
+          0,
+          (now-game.lessonStart)/LESSON_MS*100
+        )
+      )+"%";
+
+    $("lessonTimerBox").classList.toggle(
+      "danger",
+      seconds<=60
+    );
+
+    if(now>=game.lessonEnd){
+      startBattle();
+      return;
+    }
+  }
+
+  else if(game.phase==="battle"){
+
+    updateBattleTimer();
+
+    // 30 секунд бітсе,
+    // жауаптарды тексереміз.
+
+    if(!game.revealed && now>=game.roundEnd){
+      revealAnswers();
+    }
+
+    // Егер үш команда ертерек жауап берсе,
+    // келесі сұраққа бірден өтеміз.
+
+    if(
+      game.revealed &&
+      game.nextAt>0 &&
+      now>=game.nextAt
+    ){
+      nextQuestion();
+    }
+
+  }
+}
+
+/* ==================================
+   ҮЗІЛІС
+================================== */
+
+function togglePause(){
+
+  if(!["lesson","battle"].includes(game.phase)){
+    return;
+  }
+
+  if(!game.paused){
+
+    game.paused=true;
+    game.pausedAt=Date.now();
+
+    $("pauseButton").textContent=
+      "▶ Жалғастыру";
+
+  }else{
+
+    const duration=Date.now()-game.pausedAt;
+
+    if(game.phase==="lesson"){
+
+      game.lessonStart+=duration;
+      game.lessonEnd+=duration;
+
+    }
+
+    if(game.phase==="battle"){
+
+      game.roundEnd+=duration;
+
+      if(game.nextAt>0){
+        game.nextAt+=duration;
+      }
+
+    }
+
+    game.paused=false;
+
+    $("pauseButton").textContent=
+      "⏸ Үзіліс";
+
+    tick();
+  }
+}
+
+/* ==================================
+   НӘТИЖЕ
+================================== */
+
+function finishGame(){
+
+  game.phase="results";
+
+  $("phaseLabel").textContent=
+    "🏆 Батл аяқталды";
+
+  show("resultsScreen");
+
+  const ranked=game.teams.map((team,i)=>({
+    ...team,
+    index:i
+  })).sort((a,b)=>
+    b.score-a.score ||
+    b.correct-a.correct
+  );
+
+  const bestScore=ranked[0].score;
+
+  const winners=ranked.filter(team=>
+    team.score===bestScore
+  );
+
+  if(winners.length===1){
+
+    $("winnerTitle").textContent=
+      "Жеңімпаз — "+winners[0].name+"!";
+
+    $("winnerDescription").textContent=
+      "Құттықтаймыз! Команда "+
+      bestScore+" ұпай жинады!";
+
+  }else{
+
+    $("winnerTitle").textContent=
+      "Достық жеңді!";
+
+    $("winnerDescription").textContent=
+      "Бірдей ұпай жинаған командалар: "+
+      winners.map(t=>t.name).join(", ")+
+      ". Нәтиже: "+bestScore+" ұпай.";
+
+  }
+
+  $("resultRows").innerHTML=ranked.map((team,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td><b>${safe(team.name)}</b></td>
+      <td>${team.correct}</td>
+      <td>${team.wrong+team.missed}</td>
+      <td><b>${team.score}</b></td>
+    </tr>
+  `).join("");
+
+  const mistakes=game.history.filter(h=>!h.correct);
+
+  if(mistakes.length===0){
+
+    $("reviewList").innerHTML=`
+      <p style="color:var(--green)">
+        🎉 Барлық жауап дұрыс! Өте жақсы нәтиже!
+      </p>
+    `;
+
+  }else{
+
+    $("reviewList").innerHTML=mistakes.map(record=>{
+
+      const q=allQuestions[record.questionIndex];
+      const team=game.teams[record.teamIndex];
+
+      return `
+        <div class="review-item">
+
+          <span class="badge">
+            ${safe(q.type)}
+          </span>
+
+          <p>
+            <b>${safe(team.name)}:</b>
+            ${safe(q.text)}
+          </p>
+
+          <p style="color:var(--green)">
+            ✅ ${safe(q.options[q.correct])}
+          </p>
+
+          <small class="muted">
+            ${safe(q.explanation)}
+          </small>
+
+        </div>
+      `;
+
+    }).join("");
+
+  }
+}
+
+/* ==================================
+   БАТЫРМАЛАР
+================================== */
+
+$("startButton").addEventListener(
+  "click",
+  startLesson
+);
+
+$("previousButton").addEventListener(
+  "click",
+  previousLesson
+);
+
+$("nextButton").addEventListener(
+  "click",
+  nextLesson
+);
+
+$("pauseButton").addEventListener(
+  "click",
+  togglePause
+);
+
+// Үш команданың жауап батырмалары
+
+$("teamAnswerArea").addEventListener("click",event=>{
+
+  const button=event.target.closest(
+    "[data-team][data-answer]"
+  );
+
+  if(!button)return;
+
+  submitAnswer(
+    Number(button.dataset.team),
+    Number(button.dataset.answer)
+  );
+
+});
+
+// Қайта бастау
+
+$("restartButton").addEventListener("click",()=>{
+
+  game.phase="home";
+  game.paused=false;
+
+  $("phaseLabel").textContent=
+    "Сабаққа дайындық";
+
+  show("homeScreen");
+
+});
+
+// Толық экран
+
+$("fullscreenButton").addEventListener(
+  "click",
+  async()=>{
+
+    try{
+
+      if(!document.fullscreenElement){
+
+        await document.documentElement.requestFullscreen();
+
+      }else{
+
+        await document.exitFullscreen();
+
+      }
+
+    }catch(error){
+
+      alert(
+        "Толық экран режимін қосу мүмкін болмады."
+      );
+
+    }
+
+  }
+);
+
+// Таймер
+
+setInterval(tick,100);
+
+</script>
+
+</body>
+</html>
+
+
+
+
